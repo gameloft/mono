@@ -12,10 +12,11 @@ ADDITIONAL_PACKAGE_DEPS += $(mac_BIN_DIR) $(mac_PKG_CONFIG_DIR) $(mac_LIBS_DIR) 
 # Parameters
 #  $(1): target
 #  $(2): host arch
-#  $(3): xcode dir
+#  $(3): host arch for compiler (x86_64 or arm64)
+#  $(4): xcode dir
 define MacTemplate
 
-mac_$(1)_PLATFORM_BIN=$(3)/Toolchains/XcodeDefault.xctoolchain/usr/bin
+mac_$(1)_PLATFORM_BIN=$(4)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
 _mac-$(1)_CC=$$(CCACHE) $$(mac_$(1)_PLATFORM_BIN)/clang
 _mac-$(1)_CXX=$$(CCACHE) $$(mac_$(1)_PLATFORM_BIN)/clang++
@@ -28,11 +29,11 @@ _mac-$(1)_AC_VARS= \
 
 _mac-$(1)_CFLAGS= \
 	$$(mac-$(1)_SYSROOT) \
-	-arch $(2)
+	-arch $(3)
 
 _mac-$(1)_CXXFLAGS= \
 	$$(mac-$(1)_SYSROOT) \
-	-arch $(2)
+	-arch $(3)
 
 _mac-$(1)_CPPFLAGS=
 
@@ -132,8 +133,8 @@ mac-macarm64_SYSROOT=$(mac_sysroot) -mmacosx-version-min=$(MACOS_VERSION_MIN)
 
 mac-cross64_SYSROOT=$(mac_sysroot) -mmacosx-version-min=$(MACOS_VERSION_MIN)
 
-$(eval $(call MacTemplate,mac64,x86_64,$(XCODE_DIR)))
-$(eval $(call MacTemplate,macarm64,arm64,$(XCODE_DIR)))
+$(eval $(call MacTemplate,mac64,x86_64,x86_64,$(XCODE_DIR)))
+$(eval $(call MacTemplate,macarm64,aarch64,arm64,$(XCODE_DIR)))
 
 $(eval $(call MacCrossTemplate,cross64,x86_64,aarch64-apple-darwin20.0.0,target64,llvm-llvm64,aarch64-apple-darwin20,$(mac_sysroot_path)))
 
